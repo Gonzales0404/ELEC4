@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotating Rainbow Cube (Inputs on Side)</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      display: flex;
+      gap: 40px; /* space between inputs and cube */
+      align-items: center;
+    }
+
+    .inputs {
+      display: flex;
+      flex-direction: column;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .inputs label {
+      margin-bottom: 10px;
+    }
+
+    .inputs input {
+      width: 80px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      padding: 5px;
+    }
+
+    .inputs button {
+      padding: 8px;
+      background: #444;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    .inputs button:hover {
+      background: #666;
+    }
+
+    .scene {
+      width: 400px;
+      height: 400px;
+      perspective: 800px;
+    }
+
+    .cube {
+      position: relative;
+      transform-style: preserve-3d;
+      margin: auto;
+      animation: spin 8s infinite linear;
+    }
+
+    @keyframes spin {
+      0%   { transform: rotateX(-20deg) rotateY(0deg); }
+      100% { transform: rotateX(-20deg) rotateY(360deg); }
+    }
+
+    .cube-face {
+      position: absolute;
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: all 0.5s ease;
+    }
+
+    
+    #front  { background: red; }
+    #back   { background: orange; }
+    #right  { background: yellow; }
+    #left   { background: green; }
+    #top    { background: blue; }
+    #bottom { background: violet; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="inputs">
+      <label>
+        Length:
+        <input type="number" id="length" value="100">
+      </label>
+      <label>
+        Height:
+        <input type="number" id="height" value="100">
+      </label>
+      <label>
+        Width:
+        <input type="number" id="width" value="100">
+      </label>
+      <button onclick="resizeCube()">Apply</button>
+    </div>
+
+    <div class="scene">
+      <div class="cube" id="cube">
+        <div class="cube-face" id="front"></div>
+        <div class="cube-face" id="back"></div>
+        <div class="cube-face" id="right"></div>
+        <div class="cube-face" id="left"></div>
+        <div class="cube-face" id="top"></div>
+        <div class="cube-face" id="bottom"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function resizeCube() {
+      const length = parseInt(document.getElementById('length').value);
+      const height = parseInt(document.getElementById('height').value);
+      const width = parseInt(document.getElementById('width').value);
+
+      const cube = document.getElementById('cube');
+
+      const faces = {
+        front: document.getElementById('front'),
+        back: document.getElementById('back'),
+        right: document.getElementById('right'),
+        left: document.getElementById('left'),
+        top: document.getElementById('top'),
+        bottom: document.getElementById('bottom'),
+      };
+
+      
+      faces.front.style.width = length + 'px';
+      faces.front.style.height = height + 'px';
+      faces.front.style.transform = `translateZ(${width/2}px)`;
+      
+      faces.back.style.width = length + 'px';
+      faces.back.style.height = height + 'px';
+      faces.back.style.transform = `rotateY(180deg) translateZ(${width/2}px)`;
+
+     
+      faces.right.style.width = width + 'px';
+      faces.right.style.height = height + 'px';
+      faces.right.style.transform = `rotateY(90deg) translateZ(${length/2}px)`;
+
+      faces.left.style.width = width + 'px';
+      faces.left.style.height = height + 'px';
+      faces.left.style.transform = `rotateY(-90deg) translateZ(${length/2}px)`;
+
+      
+      faces.top.style.width = length + 'px';
+      faces.top.style.height = width + 'px';
+      faces.top.style.transform = `rotateX(90deg) translateZ(${height/2}px)`;
+
+      faces.bottom.style.width = length + 'px';
+      faces.bottom.style.height = width + 'px';
+      faces.bottom.style.transform = `rotateX(-90deg) translateZ(${height/2}px)`;
+
+      cube.style.width = length + 'px';
+      cube.style.height = height + 'px';
+    }
+
+ 
+    resizeCube();
+  </script>
+
+</body>
+</html>
