@@ -3,37 +3,116 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rotating Rainbow Cube (Inputs on Side)</title>
+  <title>Canvas 3D Cube</title>
   <style>
     body {
-      margin: 0;
-      background: #111;
-      font-family: Arial, sans-serif;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background:#111;
+      color:#fff;
+      font-family:Arial,sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      margin:0;
     }
-
-    .container {
-      display: flex;
-      gap: 40px; /* space between inputs and cube */
-      align-items: center;
+    .controls{
+      margin-bottom:10px;
     }
-
-    .inputs {
-      display: flex;
-      flex-direction: column;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
+    .controls input{
+      width:70px;
+      margin:5px;
+      padding:5px;
     }
+  </style>
+</head>
+<body>
 
-    .inputs label {
-      margin-bottom: 10px;
-    }
+<div class="controls">
+  Length: <input type="number" id="length" value="100">
+  Height: <input type="number" id="height" value="100">
+  Width: <input type="number" id="width" value="100">
+</div>
 
+<canvas id="cubeCanvas" width="400" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById('cubeCanvas');
+const ctx = canvas.getContext('2d');
+
+let angle = 0;
+let len = 100, hei = 100, wid = 100;
+
+document.getElementById('length').addEventListener('input', e=>len=parseFloat(e.target.value));
+document.getElementById('height').addEventListener('input', e=>hei=parseFloat(e.target.value));
+document.getElementById('width').addEventListener('input', e=>wid=parseFloat(e.target.value));
+
+function project(x,y,z){
+  
+  const scale = 400/(400+z);
+  return {
+    x: x*scale + canvas.width/2,
+    y: -y*scale + canvas.height/2
+  };
+}
+
+function drawCube(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  
+  const verts = [
+    [-len/2,-hei/2,-wid/2],
+    [ len/2,-hei/2,-wid/2],
+    [ len/2, hei/2,-wid/2],
+    [-len/2, hei/2,-wid/2],
+    [-len/2,-hei/2, wid/2],
+    [ len/2,-hei/2, wid/2],
+    [ len/2, hei/2, wid/2],
+    [-len/2, hei/2, wid/2],
+  ];
+
+  
+  const cosA = Math.cos(angle);
+  const sinA = Math.sin(angle);
+  const rotated = verts.map(v=>{
+    let x=v[0], y=v[1], z=v[2];
+    let xz = x*cosA - z*sinA;
+    let zz = x*sinA + z*cosA;
+    return [xz,y,zz];
+  });
+
+  
+  const pts = rotated.map(v=>project(v[0],v[1],v[2]));
+
+  ctx.strokeStyle="#fff";
+  ctx.lineWidth=2;
+
+  
+  const edges = [
+    [0,1],[1,2],[2,3],[3,0],
+    [4,5],[5,6],[6,7],[7,4],
+    [0,4],[1,5],[2,6],[3,7]
+  ];
+
+  edges.forEach(e=>{
+    ctx.beginPath();
+    ctx.moveTo(pts[e[0]].x, pts[e[0]].y);
+    ctx.lineTo(pts[e[1]].x, pts[e[1]].y);
+    ctx.stroke();
+  });
+}
+
+function animate(){
+  angle += 0.01;
+  drawCube();
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
     .inputs input {
       width: 80px;
       margin-top: 5px;
@@ -172,3 +251,4 @@
 
 </body>
 </html>
+
